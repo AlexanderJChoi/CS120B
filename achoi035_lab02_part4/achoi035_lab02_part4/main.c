@@ -40,8 +40,21 @@ int main(void)
 			tempD = tempD & 0xFD;
 		}
 		
-		//We'll display a binary number on D7 ... D2. This number multiplied by 2 will be the approximate weight
-		tempD = (tempD & 0x03) | (((tempSum) << 1) & 0x0FC);
+		
+		tempD = (tempD & 0x03);
+		if(tempSum < 128 && tempSum >= 0) {
+			tempD = tempD | 0x04;
+		} else if(tempSum >= 128 && tempSum < 128 * 2) {
+			tempD = tempD | 0x08;
+		} else if(tempSum >= 128 *2 && tempSum < 128 * 3) {
+			tempD = tempD | 0x10;
+		} else if(tempSum >= 128 * 3 && tempSum < 128 * 4) {
+			tempD = tempD | 0x20;
+		} else if(tempSum >= 128 * 4 && tempSum < 128 * 5) {
+			tempD = tempD | 0x40;
+		} else {
+			tempD = tempD | 0x80;
+		}
 		
 		
 		PORTD = tempD;
