@@ -28,18 +28,39 @@ int main(void)
     {
 		fuelLevel = PINA & 0x0F;
 		ledOut = 0;
+		ledOut = SetBit(ledOut, 6, 1);
 		
 		switch (fuelLevel)
 		{
+		case 15:
+		case 14:
+		case 13:
+			ledOut = SetBit(ledOut, 0, 1);
+		case 12:
+		case 11:
+		case 10:
+			ledOut = SetBit(ledOut, 1, 1);
+		case 9:
+		case 8:
+		case 7:
+			ledOut = SetBit(ledOut, 2, 1);
+		case 6:
+		case 5:
+			ledOut = SetBit(ledOut, 3, 1);
+			ledOut = SetBit(ledOut, 6, 0);
+		case 4:
+		case 3:
+			ledOut = SetBit(ledOut, 4, 1);
+		case 2:
+		case 1:
+			ledOut = SetBit(ledOut, 5, 1);
 		case 0:
 			break;
-		case 1:
-		case 2:
-			break;
-		case 3:
-		case 4:
+		default:
 			break;
 		}
+		
+		PORTC = ledOut;
     }
 }
 
