@@ -20,13 +20,13 @@ unsigned char GetBit(unsigned char x, unsigned char k) {
 int main(void)
 {
 	DDRA = 0x00; PORTA = 0xFF;
-	DDRC = 0xFF; PORTC = 0x00;
+	DDRB = 0xFF; PORTB = 0x00;
 	
 	unsigned char fuelLevel = 0x00, ledOut = 0x00;
     /* Replace with your application code */
     while (1) 
     {
-		fuelLevel = PINA & 0x0F;
+		fuelLevel = ~PINA & 0x0F;
 		ledOut = 0;
 		ledOut = SetBit(ledOut, 6, 1);
 		
@@ -60,7 +60,7 @@ int main(void)
 			break;
 		}
 		
-		PORTC = ledOut;
+		PORTB = ledOut;
     }
 }
 
