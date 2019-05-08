@@ -31,7 +31,7 @@ void set_PWM(double frequency) {
 		// set OCR3A based on desired frequency
 		else { OCR3A = (short)(8000000 / (128 * frequency)) - 1; }
 
-		TCNT0 = 0; // resets counter
+		TCNT3 = 0; // resets counter
 		current_frequency = frequency; // Updates the current frequency
 	}
 }
@@ -87,24 +87,28 @@ void tick() {
 				state = stop_0;
 			} else if(buttonUp) {
 				state = up;
-				if (i < 7) i++;
+				if (i < 7) {
+					i++;
+				}
 			} else if(buttonDown) {
 				state = down;
-				if (i > 0) i--;
+				if (i > 0) {
+					i--;
+				}
 			}
 			break;
 		case up:
 			if(buttonUp) {
 				state = up;
 			} else {
-				state = play_1;
+				state = play_0;
 			}
 			break;
 		case down:
 			if(buttonDown) {
 				state = down;
 			} else {
-				state = play_1;
+				state = play_0;
 			}
 			break;
 		default:
@@ -147,7 +151,7 @@ int main(void)
     while (1) 
     {
 		tick();
-		PORTC = state;
+		//PORTC = state;
     }
 }
 

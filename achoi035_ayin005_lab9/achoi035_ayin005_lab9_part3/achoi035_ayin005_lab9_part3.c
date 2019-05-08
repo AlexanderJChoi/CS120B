@@ -1,7 +1,7 @@
 /*	Partner 1 Name & E-mail: Alexander Choi, achoi035@ucr.edu
  *	Partner 2 Name & E-mail: ALexander Yin, ayin005@ucr.edu
  *	Lab Section: 26
- *	Assignment: Lab 9  Exercise 1
+ *	Assignment: Lab 9  Exercise 2
  *	
  *	I acknowledge all content contained herein, excluding template or example
  *	code, is my own original work.
@@ -50,70 +50,61 @@ void PWM_off() {
 	TCCR3B = 0x00;
 }
 
-enum State {intro, quiet, c, d, e} state ;
-	
+enum State {stop, play} state;
+unsigned short timer;
+unsigned char i;
+unsigned char num_notes = 8;
+
+double sounds[] = {261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.25};
+unsigned short length[] = {10000, 10000, 10000, 10000, 10000, 10000, 10000, 10000};
+unsigned short pause[] = {100, 100, 100, 100, 100, 100, 100, 100};
+
 void tick() {
-	unsigned char buttonC = ~PINA & 0x01, 
-					buttonD = (~PINA & 0x02) >> 1, 
-					buttonE = (~PINA & 0x04) >> 2;
-					
+	unsigned char buttonOn = ~PINA & 0x01;
+
 	switch (state) {
-		case intro: 
-			state = quiet;
-			break;
-		case quiet:
-			if(buttonC^buttonD^buttonE) {
-				if(buttonC) state = c;
-				if(buttonD) state = d;
-				if(buttonE) state = e;
+		case stop:
+			if(buttonOn) {
+				state = play;
 			} else {
-				state = quiet;
+				state = stop;
 			}
 			break;
-		case c:
-			if(buttonC && !buttonD && !buttonE) {
-				state = c;
+		case play:
+			if(i < num_notes || buttonOn) {
+				state = play;
 			} else {
-				state = quiet;
-			}
-			break;
-		case d:
-			if(!buttonC && buttonD && !buttonE) {
-				state = d;
-			} else {
-				state = quiet;
-			}
-			break;
-		case e:
-			if(!buttonC && !buttonD && buttonE) {
-				state = e;
-			} else {
-				state = quiet;
+				state = stop;
 			}
 			break;
 		default:
-			state = quiet;
+			state = stop;
 			break;
 	}
-	
+
 	switch(state) {
-		case quiet:
+		case stop:
 			set_PWM(0);
+			i = 0;
+			timer = 0;
 			break;
-		case c:
-			set_PWM(261.63);
-			break;
-		case d:
-			set_PWM(293.66);
-			break;
-		case e:
-			set_PWM(329.63);
-			break;
-		default:
-			set_PWM(0);
+		case play:
+			if(i < num_notes) {
+				timer++;
+				if(timer < length[i]) {
+					set_PWM(sounds[i]);
+				} else if(timer < length[i] + pause[i]) {
+					set_PWM(0);
+				} else {
+					timer = 0;
+					i++;
+				}
+			} else {
+				set_PWM(0);
+			}
 			break;
 	}
-	
+
 }
 
 
@@ -122,7 +113,9 @@ int main(void)
 	DDRB = 0xFF; PORTB = 0x00;
 	DDRC = 0xFF; PORTC = 0x00;
 	DDRA = 0x00; PORTA = 0xFF;
-	state = intro;
+	state = stop;
+	i = 0;
+	timer = 0;
 	PWM_on();
 	set_PWM(1);
 	set_PWM(0);
@@ -132,7 +125,7 @@ int main(void)
     while (1) 
     {
 		tick();
-		PORTC = state;
+		PORTC = i;
     }
 }
 
