@@ -58,7 +58,7 @@ double sounds[] = {261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.2
 void tick() {
 	unsigned char buttonOn = ~PINA & 0x01, 
 					buttonUp = (~PINA & 0x02) >> 1, 
-					buttonDown = (~PINA & 0x04) >> 2;
+					buttonDown = (	~PINA & 0x04) >> 2;
 
 	switch (state) {
 		case stop_0: 
