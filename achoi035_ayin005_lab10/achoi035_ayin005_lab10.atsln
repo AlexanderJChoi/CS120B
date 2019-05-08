@@ -7,6 +7,8 @@ Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "achoi035_ayin005_lab10_part
 EndProject
 Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "achoi035_ayin005_lab10_part2", "achoi035_ayin005_lab10_part2\achoi035_ayin005_lab10_part2.cproj", "{44411F48-F839-44C9-B4DD-7DBE65F4BE32}"
 EndProject
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "achoi035_ayin005_lab10_part3", "achoi035_ayin005_lab10_part3\achoi035_ayin005_lab10_part3.cproj", "{905A9B95-3F4A-47E7-89D8-6A271290C8FC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|AVR = Debug|AVR
@@ -21,6 +23,10 @@ Global
 		{44411F48-F839-44C9-B4DD-7DBE65F4BE32}.Debug|AVR.Build.0 = Debug|AVR
 		{44411F48-F839-44C9-B4DD-7DBE65F4BE32}.Release|AVR.ActiveCfg = Release|AVR
 		{44411F48-F839-44C9-B4DD-7DBE65F4BE32}.Release|AVR.Build.0 = Release|AVR
+		{905A9B95-3F4A-47E7-89D8-6A271290C8FC}.Debug|AVR.ActiveCfg = Debug|AVR
+		{905A9B95-3F4A-47E7-89D8-6A271290C8FC}.Debug|AVR.Build.0 = Debug|AVR
+		{905A9B95-3F4A-47E7-89D8-6A271290C8FC}.Release|AVR.ActiveCfg = Release|AVR
+		{905A9B95-3F4A-47E7-89D8-6A271290C8FC}.Release|AVR.Build.0 = Release|AVR
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
