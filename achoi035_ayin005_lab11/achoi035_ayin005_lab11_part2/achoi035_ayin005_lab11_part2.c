@@ -1,7 +1,7 @@
 /*	Partner 1 Name & E-mail: Alexander Choi, achoi035@ucr.edu
  *	Partner 2 Name & E-mail: ALexander Yin, ayin005@ucr.edu
  *	Lab Section: 26
- *	Assignment: Lab 11  part 1
+ *	Assignment: Lab 11  part 2
  *	
  *	I acknowledge all content contained herein, excluding template or example
  *	code, is my own original work.
@@ -45,6 +45,8 @@ typedef struct _task {
 //--------Shared Variables----------------------------------------------------
 unsigned char key_pressed = '\0';
 
+unsigned char* scrollMessage;
+
 //--------End Shared Variables------------------------------------------------
 
 //--------User defined FSMs---------------------------------------------------
@@ -64,6 +66,7 @@ int keyTick(int state) {
 	}
 	return state;
 }
+
 
 enum LED_States {LED_off, LED_num, LED_letter, LED_symb};
 	
@@ -121,6 +124,56 @@ int LEDTick(int state) {
 	return state;
 }
 
+
+enum Msg_Scroll_States {Msg_0, Msg_1};
+	
+int Msg_ScrollTick(int state) {
+	static unsigned char* scroll_1 = "CS120B is Legend", *scroll_2 = "... wait for it DARY!";
+	
+	switch(state) {
+		case Msg_0:
+			state = Msg_1;
+			break;
+		default:
+			state = Msg_0;
+	}
+	
+	switch (state) {
+		case Msg_0:
+			scrollMessage = scroll_1;
+			break;
+		case Msg_1:
+			scrollMessage = scroll_2;
+			break;
+	}
+	
+	return state;
+}
+
+
+enum LCD_Set_Display_States {LCD_show};
+	
+int LCDTick(int state) {
+	static unsigned char* display;
+	
+	switch(state) {
+		default:
+			state = LCD_show;
+	}
+	
+	switch(state) {
+		case LCD_show:
+			//combine LCD inputs into display
+			if(display != scrollMessage) {
+				display = scrollMessage;
+				LCD_DisplayString(1, display);
+			}
+			break;
+	}
+	
+	return state;
+}
+
 // --------END User defined FSMs-----------------------------------------------
 
 // Implement scheduler code from PES.
@@ -129,14 +182,20 @@ int main()
 // Set Data Direction Registers
 DDRC = 0xF0; PORTC = 0x0F;
 DDRB = 0xFF; PORTB = 0x00;
+DDRD = 0xFF; PORTD = 0x00;
+DDRA = 0xFF; PORTA = 0x00;
 
 // Period for the tasks
 unsigned long int keySM_calc = 50;
 unsigned long int LEDSM_calc = 50;
+unsigned long int scrollSM_calc = 2000;
+unsigned long int LCDSM_calc = 50;
 
 //Calculating GCD
 unsigned long int tmpGCD = 1;
 tmpGCD = findGCD(keySM_calc, LEDSM_calc);
+tmpGCD = findGCD(tmpGCD, LCDSM_calc);
+tmpGCD = findGCD(tmpGCD, scrollSM_calc);
 
 //Greatest common divisor for all tasks or smallest time unit for tasks.
 unsigned long int GCD = tmpGCD;
@@ -144,10 +203,12 @@ unsigned long int GCD = tmpGCD;
 //Recalculate GCD periods for scheduler
 unsigned long int keySM_period = keySM_calc/GCD;
 unsigned long int LEDSM_period = LEDSM_calc/GCD;
+unsigned long int LCDSM_period = LCDSM_calc/GCD;
+unsigned long int scrollSM_period = scrollSM_calc/GCD;
 
 //Declare an array of tasks 
-static task key, LED;
-task *tasks[] = { &key, &LED};
+static task key, LED, LCD, scroll;
+task *tasks[] = { &key, &LED, &LCD, &scroll};
 const unsigned short numTasks = sizeof(tasks)/sizeof(task*);
 
 // Keypad
@@ -160,6 +221,18 @@ LED.state = -1;//Task initial state.
 LED.period = LEDSM_period;//Task Period.
 LED.elapsedTime = LEDSM_period;//Task current elapsed time.
 LED.TickFct = &LEDTick;//Function pointer for the tick.
+// LCD
+LCD.state = -1;//Task initial state.
+LCD.period = LCDSM_period;//Task Period.
+LCD.elapsedTime = LCDSM_period;//Task current elapsed time.
+LCD.TickFct = &LCDTick;//Function pointer for the tick.
+// scroll
+scroll.state = -1;//Task initial state.
+scroll.period = scrollSM_period;//Task Period.
+scroll.elapsedTime = scrollSM_period;//Task current elapsed time.
+scroll.TickFct = &Msg_ScrollTick;//Function pointer for the tick.
+
+LCD_init();
 
 // Set the timer and turn it on
 TimerSet(GCD);
