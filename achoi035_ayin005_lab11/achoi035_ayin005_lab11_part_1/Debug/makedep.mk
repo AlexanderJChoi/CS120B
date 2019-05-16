@@ -2,5 +2,5 @@
 # Automatically-generated file. Do not edit or delete the file
 ################################################################################
 
-main.c
+achoi035_ayin005_lab11_part_1.c
 
