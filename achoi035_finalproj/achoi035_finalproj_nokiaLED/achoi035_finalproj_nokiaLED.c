@@ -12,7 +12,7 @@
 
 enum LCD_update {render} state;
 unsigned char letter;
-short x = 1;
+short x = 0;
 
 unsigned char character[] = {0xF8, 0xF8, 0xF8, 0xF8, 0xF8};
 unsigned char character2[] = {0xA8, 0x50, 0xA8, 0x50, 0xA8};
@@ -201,10 +201,10 @@ void LCD_drawImage(unsigned char * image, short pos_x, short pos_y, uint8_t size
 	unsigned char bit;
 	unsigned short tempX, tempY, tempI;
 	
-	for (row = 0; row < size_y; row++) {
+	for (row = (pos_y < 0) ? (pos_y * -1) : 0; row < size_y; row++) {
 		tempY = pos_y + row;
 		if((tempY < 48)) {
-			for (col = 0; col < line_size; col++ ) {
+			for (col = (pos_x < 0) ? (pos_x * -1 / 8) : 0; col < line_size; col++ ) {
 				tempI = row * line_size + col;
 				for (bit = 0; bit < 8; bit++) {
 					tempX = pos_x + (col * 8) + ( 7 - bit );
@@ -213,6 +213,8 @@ void LCD_drawImage(unsigned char * image, short pos_x, short pos_y, uint8_t size
 					}
 				}
 			}
+		} else {
+			break;
 		}
 	}
 }
@@ -237,7 +239,7 @@ int main(void)
 		}
 		
 		//nokia_lcd_set_pixel(x, 20, 1);
-		LCD_drawImage(&(maze[0]), x, 1, 158, 158);
+		LCD_drawImage(&(maze[0]), x, 0, 158, 158);
 		
 		state = LCD_updateTick(state);
 	}
